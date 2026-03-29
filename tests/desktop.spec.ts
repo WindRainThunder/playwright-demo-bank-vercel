@@ -1,17 +1,23 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Desktop tests", () => {
-  // Arrange
-  const userName = "tester12";
-  const userPassword = "tester1@";
-  const url = "https://demo-bank.vercel.app/";
+  test.beforeEach(async ({ page }) => {
+    // Arrange
+    const userName = "tester12";
+    const userPassword = "tester1@";
+    const url = "https://demo-bank.vercel.app/";
 
-  test("desktop - quick payment correct data", async ({ page }) => {
     // Act
     await page.goto(url);
     await page.getByTestId("login-input").fill(userName);
     await page.getByTestId("password-input").fill(userPassword);
     await page.getByTestId("login-button").click();
+  });
+
+  test("desktop - quick payment correct data", async ({ page }) => {
+    // Arrange
+    const expectedResult =
+      "Przelew wykonany! Jan Demobankowy - 50,00PLN - Pizza";
 
     await page.locator("#widget_1_transfer_receiver").selectOption("1");
     await page.locator("#widget_1_transfer_amount").fill("50");
@@ -20,18 +26,15 @@ test.describe("Desktop tests", () => {
     await page.getByTestId("close-button").click();
 
     // Assert
-    await expect(page.locator("#show_messages")).toHaveText(
-      "Przelew wykonany! Jan Demobankowy - 50,00PLN - Pizza",
-    );
+    await expect(page.locator("#show_messages")).toHaveText(expectedResult);
   });
 
   test("desktop - phone top up", async ({ page }) => {
-    // Act
-    await page.goto(url);
-    await page.getByTestId("login-input").fill(userName);
-    await page.getByTestId("password-input").fill(userPassword);
-    await page.getByTestId("login-button").click();
+    // Arrange
+    const expectedResult =
+      "Doładowanie wykonane! 25,00PLN na numer 502 xxx xxx";
 
+    // Act
     await page.locator("#widget_1_topup_receiver").selectOption("502 xxx xxx");
     await page.locator("#widget_1_topup_amount").fill("25");
     await page.locator("#widget_1_topup_agreement").click();
@@ -39,31 +42,21 @@ test.describe("Desktop tests", () => {
     await page.getByTestId("close-button").click();
 
     // Assert
-    await expect(page.locator("#show_messages")).toHaveText(
-      "Doładowanie wykonane! 25,00PLN na numer 502 xxx xxx",
-    );
+    await expect(page.locator("#show_messages")).toHaveText(expectedResult);
   });
 
   test("desktop - check account number", async ({ page }) => {
-    // Act
-    await page.goto(url);
-    await page.getByTestId("login-input").fill(userName);
-    await page.getByTestId("password-input").fill(userPassword);
-    await page.getByTestId("login-button").click();
-
+    // Arrange
+    const expectedResult = "(41 4100 1111 1111 1111 1111 0000)";
     //Assert
-    await expect(page.locator("#account_number")).toHaveText(
-      "(41 4100 1111 1111 1111 1111 0000)",
-    );
+    await expect(page.locator("#account_number")).toHaveText(expectedResult);
   });
 
   test("desktop - check avaliable funds", async ({ page }) => {
-    // Act
-    await page.goto(url);
-    await page.getByTestId("login-input").fill(userName);
-    await page.getByTestId("password-input").fill(userPassword);
-    await page.getByTestId("login-button").click();
+    // Arrange
+    const expectedResult = "13159.20 PLN";
 
+    // Act
     const decimal_value = await page.locator("#decimal_value").textContent();
     const money_value = await page.locator("#money_value").textContent();
     const currency_wrapper = await page
@@ -74,16 +67,14 @@ test.describe("Desktop tests", () => {
     const result = money_value + "." + decimal_value + " " + currency_wrapper;
 
     // Assert
-    await expect(result).toBe("13159.20 PLN");
-    
+    await expect(result).toBe(expectedResult);
   });
 
   test("desktop - installment loan", async ({ page }) => {
+    // Arrange
+    const expectedResult = "13 070,83 PLN";
+
     // Act
-    await page.goto(url);
-    await page.getByTestId("login-input").fill(userName);
-    await page.getByTestId("password-input").fill(userPassword);
-    await page.getByTestId("login-button").click();
     await page.getByText("kredyt ratalny").click();
     const decimal_value = await page
       .locator(
@@ -110,7 +101,7 @@ test.describe("Desktop tests", () => {
 
     // Assert
     if (result) {
-      await expect(result).toBe("13 070,83 PLN");
+      await expect(result).toBe(expectedResult);
     }
   });
 });
