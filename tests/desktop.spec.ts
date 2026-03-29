@@ -5,10 +5,9 @@ test.describe("Desktop tests", () => {
     // Arrange
     const userName = "tester12";
     const userPassword = "tester1@";
-    const url = "https://demo-bank.vercel.app/";
 
     // Act
-    await page.goto(url);
+    await page.goto("/");
     await page.getByTestId("login-input").fill(userName);
     await page.getByTestId("password-input").fill(userPassword);
     await page.getByTestId("login-button").click();
@@ -19,6 +18,7 @@ test.describe("Desktop tests", () => {
     const expectedResult =
       "Przelew wykonany! Jan Demobankowy - 50,00PLN - Pizza";
 
+    //Act
     await page.locator("#widget_1_transfer_receiver").selectOption("1");
     await page.locator("#widget_1_transfer_amount").fill("50");
     await page.locator("#widget_1_transfer_title").fill("Pizza");
@@ -78,7 +78,7 @@ test.describe("Desktop tests", () => {
     await page.getByText("kredyt ratalny").click();
     const decimal_value = await page
       .locator(
-        "#aggregation_list > section:nth-child(5) > div.dashboard-list > article:nth-child(1) > div.row.account-header.box-white.table-alike.active > div > div > div > span.account-amount.table-grid-26.table-grid-mt-48.table-grid-ms-48 > span.fancy-amount > span.decimal-wrapper",
+        "#aggregation_list > section:nth-child(5) > div.dashboard-list > article:nth-child(1) > div.row.account-header.box-white.table-alike > div > div > div > span.account-amount.table-grid-26.table-grid-mt-48.table-grid-ms-48 > span.fancy-amount > span.decimal-wrapper",
       )
       .textContent();
     const money_value = await page
